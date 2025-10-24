@@ -8,13 +8,17 @@ Clouds containing ice remain a source of great uncertainty in climate models and
 📜 **Cite as**
 ```bibtex
 @article{jeggle2024icecloudnet3d,
-      title={IceCloudNet: 3D reconstruction of cloud ice from Meteosat SEVIRI}, 
-      author={Kai Jeggle and Mikolaj Czerkawski and Federico Serva and Bertrand Le Saux and David Neubauer and Ulrike Lohmann},
-      year={2024},
-      eprint={2410.04135},
-      archivePrefix={arXiv},
-      primaryClass={physics.ao-ph},
-      url={https://arxiv.org/abs/2410.04135}, 
+      author = "Kai Jeggle and Mikolaj Czerkawski and Federico Serva and Bertrand Le Saux and David Neubauer and Ulrike Lohmann",
+      title = "IceCloudNet: 3D Reconstruction of Cloud Ice from Meteosat SEVIRI",
+      journal = "Artificial Intelligence for the Earth Systems",
+      year = "2025",
+      publisher = "American Meteorological Society",
+      address = "Boston MA, USA",
+      volume = "4",
+      number = "4",
+      doi = "10.1175/AIES-D-24-0098.1",
+      pages=      "240098",
+      url = "https://journals.ametsoc.org/view/journals/aies/4/4/AIES-D-24-0098.1.xml"
 }
 ```
 
