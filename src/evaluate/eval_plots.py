@@ -51,8 +51,8 @@ def cloud_occurance_per_height_level(y_hat,
                                                      aspect=0.7,     
                                                      grid=True,   
                                                      fontsize={"title":24, "xlabel":20,"ylabel":20,"legend":20,"ticks":15},
-                                                     linewidth=3,
-                                                     linestyle=["-","-",":"],
+                                                     line_width=3,
+                                                     # linestyle=["-","-",":"],
                                                      shared_axes=False)):
 
     # y_hat cloud occurance                                 
@@ -276,7 +276,7 @@ def iwc_vs_iwc_plt(y_hat, dardar, target_variable="iwc",target_transform=LogTran
 
     iwc_plt = df.query("IceCloudNet >0").hvplot.hexbin(y="Dardar",x="IceCloudNet",invert=True,logx=True,logy=True,logz=True).opts(**plt_kwargs)
 
-    iwc_plt = iwc_plt * hv.Curve([[0,0],[1e7,1e7]]).opts(color="grey",linewidth=3,linestyle="--")
+    iwc_plt = iwc_plt * hv.Curve([[0,0],[1e7,1e7]]).opts(color="grey",line_width=3)#,linestyle="--")
 
     mae_all_cloud = torch.abs(stacked_1d[:,0] - stacked_1d[:,1]).mean()
     mae_incloud = torch.abs(stacked_1d_incloud_dardar[:,0] - stacked_1d_incloud_dardar[:,1]).mean()
@@ -288,7 +288,7 @@ def iwc_vs_iwc_plt(y_hat, dardar, target_variable="iwc",target_transform=LogTran
     conditional_mean_cond_icn = target_transform.inverse_transform(target_transform(df).round(1).groupby("IceCloudNet").describe()["Dardar"][["std","mean"]].reset_index()).query("IceCloudNet >0") # type: ignore
     conditional_mean_cond_icn["lower"] = conditional_mean_cond_icn["mean"] - conditional_mean_cond_icn["std"]
     conditional_mean_cond_icn["upper"] = conditional_mean_cond_icn["mean"] + conditional_mean_cond_icn["std"]
-    cond_mean_plts = conditional_mean_cond_icn.hvplot.line(y="mean",x="IceCloudNet",invert=True,legend=True,logx=True,logy=True,color=palettes.Reds3[1],linewidth=3) * conditional_mean_cond_icn.hvplot.area(x="IceCloudNet",y="lower",y2="upper",invert=True,alpha=0.5).opts(facecolor=palettes.Reds3[1])
+    cond_mean_plts = conditional_mean_cond_icn.hvplot.line(y="mean",x="IceCloudNet",invert=True,legend=True,logx=True,logy=True,color=palettes.Reds3[1],line_width=3) * conditional_mean_cond_icn.hvplot.area(x="IceCloudNet",y="lower",y2="upper",invert=True,alpha=0.5).opts(facecolor=palettes.Reds3[1])
     
     
     

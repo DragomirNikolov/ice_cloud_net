@@ -51,10 +51,11 @@ def read_dardar_one_day(date, source_dir):
     """
     datestring = date.strftime("%Y_%m_%d")
 
-    if "DARDAR_NICE" in source_dir:
+    if "dardar_nice" in source_dir.lower():
         source_dir += f"/{date.year}"
         preproc_func = adapt_dardar_nice
     else:
+        print("No dardar ")
         preproc_func = None
 
     if not os.path.isdir(os.path.join(source_dir, datestring)):
@@ -496,6 +497,7 @@ def create_patches_pipeline(d: date,
 
     # reading dardar
     dar_ds = read_dardar_one_day(d, source_dir=DARDAR_SOURCE_DIR)
+    print("One day read")
     
     # For some dates no DARDAR data exists
     if not dar_ds:
@@ -628,13 +630,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Create patches for IceCloudNet Training")
     
     # define directory locations
-    SEVIRI_SOURCE_DIR = "/path/to/unzipped_SEVIRI_files"
-    DARDAR_SOURCE_DIR = "/path/to/DARDAR_Nice_files"
-    TRAINING_DATA_DIR = "./path/to/dir/where/patches/will/be/stored"
+    SEVIRI_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/SEVIRI"
+    DARDAR_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/DARDAR_Nice"
+    TRAINING_DATA_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/patches"
     SEVIRI_PROJECTION = "./seviri_proj.json"
 
     PATCH_SIZE = 128
-    ROI = [-32,32,-32,32], # lon_min, lon_max, lat_min, lat_max
+    # ROI = [-32,32,-32,32] # lon_min, lon_max, lat_min, lat_max
+    ROI = [-50,50,-50,10] # lon_min, lon_max, lat_min, lat_max
+
 
     # Start date: positional argument for date_string in format YYYYMMDD
     parser.add_argument(
@@ -677,15 +681,35 @@ if __name__ == '__main__':
                         ROI = ROI, # lon_min, lon_max, lat_min, lat_max
                         PATCH_SIZE = PATCH_SIZE,
                         DARDAR_LEVELS = (1680,20580),
-                        DARDAR_VARIABLES = {"continuous": ["iwp","iwc","reffcli","icnc_5um","icnc_100um","temperature","time","longitude","latitude"], 
-                                            "categorical": ["day_night_flag","land_water_mask","iteration_flag","land_water_mask","clm"]})
-    # create pool and run in pipeline in parallel
+                         DARDAR_VARIABLES = {"continuous": ["iwp","iwc","icnc_5um","icnc_100um","temperature","time","longitude","latitude"],\
+                                             "categorical": ["day_night_flag","iteration_flag","clm"]})
+                        # DARDAR_VARIABLES = {"continuous": ["iwp","iwc","reffcli","icnc_5um","icnc_100um","temperature","time","longitude","latitude"], 
+                        #                     "categorical": ["day_night_flag","land_water_mask","iteration_flag","land_water_mask","clm"]})
+    # # create pool and run in pipeline in parallel
     pool = mp.Pool(n_workers)
-    for d in date_iterator(start_date, end_date):
-        pool.apply_async(create_patches_pipeline, kwds=dict(d=d, **pipeline_dict))
+    # for d in date_iterator(start_date, end_date):
+    #     pool.apply_async(create_patches_pipeline, kwds=dict(d=d, **pipeline_dict))
         
-        #ROI=[-30,30,40,60],
-        #TRAINING_DATA_DIR="/net/n2o/wolke_scratch2/kjeggle/VerticalCloud/DataSmallDomainNorth/TrainingData")
+    #     #ROI=[-30,30,40,60],
+    #     #TRAINING_DATA_DIR="/net/n2o/wolke_scratch2/kjeggle/VerticalCloud/DataSmallDomainNorth/TrainingData")
 
+    # pool = mp.Pool(n_workers)
+    # pool.close()
+    # pool.join()
+    results = []
+    
+    for d in date_iterator(start_date, end_date):
+        res = pool.apply_async(create_patches_pipeline, kwds=dict(d=d, **pipeline_dict))
+        results.append((d, res))
+    
     pool.close()
+    
+    for d, res in results:
+        try:
+            print(f"Result for {d}: {res.get()}")
+        except Exception as e:
+            print(f"Error for {d}: {e}")
+            raise
+    
     pool.join()
+

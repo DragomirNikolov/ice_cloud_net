@@ -21,6 +21,7 @@ from omegaconf import OmegaConf
 
 import socket
 import sys
+sys.path.append("/cluster/work/climate/dnikolo/IceCLoudNet_model/ice_cloud_net/src")
 
 from data.data_utils import load_patches, sort_overpass_indices, get_overpass_direction, get_height_level_range
 from helpers.misc_helpers import *
@@ -70,7 +71,7 @@ def load_discriminator_model(model_conf_filepath,model_checkpoint_dir, epoch=Non
     return model, model_conf
 
 def load_seviri_data(d, data_dir, patch_size=128):
-    input_dir = os.path.join(data_dir,"SeviriWholeAreaInput")
+    input_dir = os.path.join(data_dir,"SEVIRIWholeAreaInput")
     ds_seviri = xr.open_dataset(os.path.join(input_dir, f"seviri_timeseries_{d}.nc"))
     ds_seviri = add_meta_seviri(ds_seviri, os.path.join(data_dir))
 
@@ -465,7 +466,7 @@ def run(d, timestep_slice, model_conf_filepath, model_checkpoint_dir):
     model, dm = load_model(DATA_DIR, 
                            model_conf_filepath=model_conf_filepath,
                            model_checkpoint_dir=model_checkpoint_dir,
-                           checkpoint_epoch=143)
+                           checkpoint_epoch=None)
     print("loaded model")
 
     # prep input data
@@ -497,9 +498,18 @@ def run(d, timestep_slice, model_conf_filepath, model_checkpoint_dir):
 
     print(f"run time {datetime.now()-start_time}")
 
+def parse_yyyymmdd(s: str) -> datetime:
+    """Parse a date string in YYYYMMDD format into a datetime."""
+    try:
+        return datetime.strptime(s, "%Y%m%d")
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"Invalid date '{s}'. Expected format YYYYMMDD (e.g., 20260107)."
+        )
+
 if __name__ == "__main__":
     # Define directory paths as global variables → adapt to your setup
-    DATA_DIR = "/path/to/data/" 
+    DATA_DIR = "/cluster/work/climate/dnikolo/dumps/test_time_series" 
     # must have the following subdirectories `WholeAreaPredictions` and files
     # - WholeAreaPredictions (to save IceCloudNet predictions)
     # - SEVIRIWholeAreaInput (seviri data for the whole domain)
@@ -508,12 +518,20 @@ if __name__ == "__main__":
     # - seviri_aux_latlon.nc
 
     # Define path to model config
-    model_conf = "/path/to/model/config"
+    model_conf = "/cluster/work/climate/dnikolo/IceCLoudNet_model/ice_cloud_net/src/model_configs/ice_cloud_net_conf.yaml"
 
     # Define path to model checkpoint
-    model_checkpoint_dir = "/path/to/model/checkpoint"
-
+    model_checkpoint_dir = "/cluster/work/climate/dnikolo/IceCLoudNet_model/ice_cloud_net/src/model_checkpoints"
+    # model_checkpoint_dir = "/cluster/work/climate/dnikolo/dumps/test_time_series/checkpoints"
     parser = argparse.ArgumentParser(description="Process a date string and a timestep slice.")
+
+    # Positional argument: date_string in YYYYMMDD
+    parser.add_argument(
+        "date_string",
+        type=parse_yyyymmdd,
+        help="Date in YYYYMMDD format (e.g., 20260107)"
+    )
+
     # Positional argument for timestep_slice as a tuple (smallest, largest)
     parser.add_argument(
         "timestep_slice", 
@@ -528,4 +546,4 @@ if __name__ == "__main__":
     print(f"Date: {args.date_string.strftime('%Y%m%d')}")
     print(f"Timestep slice: {args.timestep_slice}")
     
-    run(args.date_string.strftime('%Y%m%d'), args.timestep_slice)
+    run(args.date_string.strftime('%Y%m%d'), args.timestep_slice, model_conf, model_checkpoint_dir)
