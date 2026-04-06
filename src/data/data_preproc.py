@@ -632,12 +632,12 @@ if __name__ == '__main__':
     # define directory locations
     SEVIRI_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/SEVIRI"
     DARDAR_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/DARDAR_Nice"
-    TRAINING_DATA_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/patches"
+    TRAINING_DATA_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/Mid_lat/Training_data"
     SEVIRI_PROJECTION = "./seviri_proj.json"
 
     PATCH_SIZE = 128
     # ROI = [-32,32,-32,32] # lon_min, lon_max, lat_min, lat_max
-    ROI = [-50,50,-50,10] # lon_min, lon_max, lat_min, lat_max
+    ROI = [-50,50,-60,-30] # lon_min, lon_max, lat_min, lat_max
 
 
     # Start date: positional argument for date_string in format YYYYMMDD
