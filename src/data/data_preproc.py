@@ -631,8 +631,9 @@ if __name__ == '__main__':
     
     # define directory locations
     SEVIRI_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/SEVIRI"
-    DARDAR_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/DARDAR_Nice"
-    TRAINING_DATA_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/Mid_lat/Training_data"
+    # DARDAR_SOURCE_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/DARDAR_Nice_v1"
+    DARDAR_SOURCE_DIR = "/nfs/ch4/wolke_scratch/dnikolo/DARDAR_data/DARDAR_Nice"
+    TRAINING_DATA_DIR = "/cluster/work/climate/dnikolo/IceCloudNet_Data/Mid_lat_v2/TrainingData"
     SEVIRI_PROJECTION = "./seviri_proj.json"
 
     PATCH_SIZE = 128
@@ -681,8 +682,10 @@ if __name__ == '__main__':
                         ROI = ROI, # lon_min, lon_max, lat_min, lat_max
                         PATCH_SIZE = PATCH_SIZE,
                         DARDAR_LEVELS = (1680,20580),
-                         DARDAR_VARIABLES = {"continuous": ["iwp","iwc","icnc_5um","icnc_100um","temperature","time","longitude","latitude"],\
-                                             "categorical": ["day_night_flag","iteration_flag","clm"]})
+                         DARDAR_VARIABLES = {"continuous": ["iwp","iwc","reffcli","icnc_5um","icnc_100um","temperature","time","longitude","latitude"], 
+                                            "categorical": ["day_night_flag","land_water_mask","iteration_flag","land_water_mask","clm"]})
+                         # DARDAR_VARIABLES = {"continuous": ["iwp","iwc","icnc_5um","icnc_100um","temperature","time","longitude","latitude"],\
+                         #                     "categorical": ["day_night_flag","iteration_flag","clm"]})
                         # DARDAR_VARIABLES = {"continuous": ["iwp","iwc","reffcli","icnc_5um","icnc_100um","temperature","time","longitude","latitude"], 
                         #                     "categorical": ["day_night_flag","land_water_mask","iteration_flag","land_water_mask","clm"]})
     # # create pool and run in pipeline in parallel
