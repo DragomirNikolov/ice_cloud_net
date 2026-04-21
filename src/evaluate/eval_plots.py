@@ -372,6 +372,7 @@ def horizontal_cloud_cover_plt(dardar_cloud_cover_data_1d, y_hat_cloud_cover_dat
     r2 = r2_score(dardar_cloud_cover_data_1d.numpy(),y_hat_cloud_cover_data_1d.numpy())
     mae = mean_absolute_error(dardar_cloud_cover_data_1d, y_hat_cloud_cover_data_1d)
     
+    
     sns.lineplot(x=[0,1],y=[0,1],linestyle="--",color="grey")
     g.fig.text(0.2, 0.7, 'R² = ' + str(round(r2,2)),fontsize=20)
     g.fig.text(0.2, 0.6, 'MAE = ' + str(round(mae,2)),fontsize=20)
